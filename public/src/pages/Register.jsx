@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Link } from 'react-router-dom';
+import { json, Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Logo from '../assets/logo.png';
 import {toast, ToastContainer} from 'react-toastify';
@@ -8,6 +8,8 @@ import axios from "axios";
 import { registerRoute } from '../utils/APIRoutes';
 
 function Register() {
+    const navigate = useNavigate()
+
     const [values, setValues] = useState({
         username: "",
         email: "", 
@@ -19,12 +21,20 @@ function Register() {
         event.preventDefault();
         if(handleValidation()){
             console.log("in validation", registerRoute);
-            const {password, confirmPassword, username, email} = values;
+            const {password, username, email} = values;
             const data = await axios.post(registerRoute, {
                 username,
                 email,
                 password,
             });
+
+            if(data.data.status === false){
+                toast.error(data.msg, toastOptions);
+            }
+            if(data.data.status === true){
+                localStorage.setItem("chat-app-user", JSON.stringify(data.user));
+                navigate("/");
+            }
         }
     }
 
@@ -42,10 +52,10 @@ function Register() {
             toast.error("password and confirm password should be same", toastOptions);
             return false;
         } else if (username.length < 3){
-            toast.error("username should be greater thatn 3 characters", toastOptions);
+            toast.error("username should be greater that 3 characters", toastOptions);
             return false;
         } else if (password.length < 8){
-            toast.error("password should be equal or greater thatn 8 characters", toastOptions);
+            toast.error("password should be equal or greater that 8 characters", toastOptions);
             return false;
         } else if(email === "") {
             toast.error("email is required", toastOptions);
