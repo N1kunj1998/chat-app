@@ -25,31 +25,14 @@ function SetAvatar() {
         theme: "dark"
     };
 
-    useEffect( async () => {
-        if(localStorage.getItem("chat-app-user")) {
+    useEffect(() => {
+        async function checkLogin(){
+        if(!localStorage.getItem("chat-app-user")) {
             navigate('/login');
-          }
-    }, [])
-
-    const setProfilePicture = async () => {
-        if(selectedAvatar === undefined) {
-            toast.error("please select avatar", toastOptions);
-        } else {
-            const user = await JSON.parse(localStorage.getItem('chat-app-user'));
-            const data = await axios.post(`${setAvatarRoute}/${user._id}`,{
-                image: avatars[selectedAvatar],
-            });
-            console.log(data);
-            if(data.isSet){
-                user.isAvatarImageSet = true;
-                user.avatarImage = data.image;
-                localStorage.setItem("chat-app-user", JSON.stringify(user));
-                navigate('/');
-            } else {
-                toast.error("error setting avatar, Please try agian.", toastOptions);
-            }
         }
-    }
+        }
+        checkLogin();
+    }, [])
 
     useEffect(() => {
         async function loadImages() {
@@ -65,6 +48,24 @@ function SetAvatar() {
         loadImages();
     }, []);
 
+    const setProfilePicture = async () => {
+        if(selectedAvatar === undefined) {
+            toast.error("please select avatar", toastOptions);
+        } else {
+            const user = await JSON.parse(localStorage.getItem('chat-app-user'));
+            const {data} = await axios.post(`${setAvatarRoute}/${user._id}`,{
+                image: avatars[selectedAvatar],
+            });
+            if(data.isSet){
+                user.isAvatarImageSet = true;
+                user.avatarImage = data.image;
+                localStorage.setItem("chat-app-user", JSON.stringify(user));
+                navigate('/');
+            } else {
+                toast.error("error setting avatar, Please try agian.", toastOptions);
+            }
+        }
+    }
 
   return (
     <>

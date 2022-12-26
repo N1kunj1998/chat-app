@@ -38,8 +38,8 @@ function Register() {
                 toast.error(data.data.msg, toastOptions);
             }
             if(data.data.status === true){
-                localStorage.setItem("chat-app-user", JSON.stringify(data.user));
-                navigate("/");
+                localStorage.setItem("chat-app-user", JSON.stringify(data.data.user));
+                navigate("/setAvatar");
             }
         }
     }

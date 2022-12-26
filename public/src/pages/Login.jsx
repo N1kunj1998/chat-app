@@ -15,6 +15,12 @@ function Login() {
         password: "",
     });
 
+    useEffect(() => {
+        if(localStorage.getItem("chat-app-user")) {
+          navigate('/');
+        }
+      }, []);
+
     const toastOptions = {
         position: "bottom-right",
         autoClose: 8000,
@@ -23,11 +29,7 @@ function Login() {
         theme: "dark"
     };
 
-    useEffect(() => {
-      if(localStorage.getItem("chat-app-user")) {
-        navigate('/');
-      }
-    }, [])
+    
 
     const handleSubmit = async (event) => {
         event.preventDefault();
