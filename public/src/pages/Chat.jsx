@@ -4,11 +4,14 @@ import styled from 'styled-components';
 import axios from "axios";
 import { allUsersRoute } from '../utils/APIRoutes';
 import Contacts from '../components/Contacts';
+import Welcome from '../components/Welcome';
+import ChatContainer from '../components/ChatContainer';
 
 function Chat() {
   const [contacts, setContacts] = useState([]);
   const [currentUser, setCurrentUser] = useState(undefined);
   const [currentChat, setCurrentChat] = useState(undefined);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -17,7 +20,8 @@ function Chat() {
       if(!localStorage.getItem("chat-app-user")) {
         navigate('/login');
       } else {
-        setCurrentUser(JSON.parse(localStorage.getItem("chat-app-user")))
+        setCurrentUser(JSON.parse(localStorage.getItem("chat-app-user")));
+        setIsLoaded(true);
       }
     }
     checkLogin();
@@ -44,9 +48,17 @@ function Chat() {
   return (
     <Container>
       <div className="container">
-        <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}>
-
-        </Contacts>
+        <Contacts 
+          contacts={contacts} 
+          currentUser={currentUser} 
+          changeChat={handleChatChange} 
+        />
+        {
+          isLoaded && currentChat === undefined ? 
+          <Welcome currentUser={currentUser} /> : 
+          <ChatContainer currentChat={currentChat} />
+        }
+        
       </div>
     </Container>
   )
